@@ -1,8 +1,11 @@
 import { Canvas } from "./components/Canvas";
 import { LetterInput } from "./components/LetterInput";
+import { useSolver } from "./lib/utils";
 
 function App() {
     const letters = new Array(4).fill("").map(() => new Array(3).fill(""));
+
+    useSolver(letters);
 
     return (
         <div className="flex flex-col items-center">
