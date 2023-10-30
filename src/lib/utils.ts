@@ -6,9 +6,6 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-const areSetsEqual = (a, b) =>
-    a.size === b.size && [...a].every((value) => b.has(value));
-
 type TrieNode = {
     isEndOfWord: boolean;
     children: { [key: string]: TrieNode };
@@ -178,16 +175,18 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
     return results;
 };
 
-export const useSolver = (letters: string[][]): string[][] => {
+export const useSolver = (letters: string[][], solveTrigger: boolean): string[][] => {
     const [answers, setAnswers] = useState<string[][]>([[]]);
     const trieRef = useRef<Trie | null>(null);
 
-    letters = [
-        ["I", "U", "C"],
-        ["S", "G", "P"],
-        ["Y", "L", "T"],
-        ["H", "O", "A"],
-    ];
+    console.log("UTILS", letters);
+
+    // letters = [
+    //     ["I", "U", "C"],
+    //     ["S", "G", "P"],
+    //     ["Y", "L", "T"],
+    //     ["H", "O", "A"],
+    // ];
 
     useEffect(() => {
         if (!trieRef.current) {
@@ -210,7 +209,8 @@ export const useSolver = (letters: string[][]): string[][] => {
             setAnswers(findOneWords(trieRef.current, letters).concat(findTwoWords(trieRef.current, letters)));
         }
         console.log(answers);
-    }, []);
+    }, [solveTrigger]);
 
+    console.log("FINAL", answers);
     return answers;
 };

@@ -1,62 +1,43 @@
-import { Canvas } from "./components/Canvas";
-import { LetterInput } from "./components/LetterInput";
+import React, { useState, useEffect, useRef } from "react";
+import { Board } from "./components/Board";
+import { Button } from "@/components/ui/button";
 import { useSolver } from "./lib/utils";
 
 function App() {
-    const letters = new Array(4).fill("").map(() => new Array(3).fill(""));
+    const [solveTrigger, setSolveTrigger] = useState(false);
+    const [answers, setAnswers] = useState<string[][]>([]);
 
-    useSolver(letters);
+    const lettersRef = useRef([
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""],
+    ]);
+
+    const getAnswers = useSolver(lettersRef.current, solveTrigger);
+
+    useEffect(() => {
+        if (solveTrigger) {
+            const newAnswers = getAnswers;
+            setAnswers(newAnswers);
+            setSolveTrigger(false);
+        }
+    }, [solveTrigger, getAnswers]);
+
+    const handleSolveClick = () => {
+        setSolveTrigger(true);
+    };
 
     return (
-        <div className="flex flex-col items-center">
-            <div className="flex items-center gap-x-[3.25rem]">
-                <LetterInput direction="top" id={0} letters={letters} />
-                <LetterInput direction="top" id={1} letters={letters} />
-                <LetterInput direction="top" id={2} letters={letters} />
-            </div>
-            <div>
-                <div className="flex items-center">
-                    <div className="flex flex-col items-center gap-y-[3.25rem]">
-                        <LetterInput
-                            direction="left"
-                            id={0}
-                            letters={letters}
-                        />
-                        <LetterInput
-                            direction="left"
-                            id={1}
-                            letters={letters}
-                        />
-                        <LetterInput
-                            direction="left"
-                            id={2}
-                            letters={letters}
-                        />
-                    </div>
-                    <Canvas />
-                    <div className="flex flex-col items-center gap-y-[3.25rem]">
-                        <LetterInput
-                            direction="right"
-                            id={0}
-                            letters={letters}
-                        />
-                        <LetterInput
-                            direction="right"
-                            id={1}
-                            letters={letters}
-                        />
-                        <LetterInput
-                            direction="right"
-                            id={2}
-                            letters={letters}
-                        />
-                    </div>
+        <div>
+            <h1 className="font-bold text-6xl mb-20">Letterboxed Solver</h1>
+            <div className="flex items-center">
+                <div>
+                    <Button variant="secondary" onClick={handleSolveClick}>
+                        Solve
+                    </Button>
                 </div>
-            </div>
-            <div className="flex items-center gap-x-[3.25rem]">
-                <LetterInput direction="bottom" id={0} letters={letters} />
-                <LetterInput direction="bottom" id={1} letters={letters} />
-                <LetterInput direction="bottom" id={2} letters={letters} />
+                <Board {...lettersRef} />
             </div>
         </div>
     );

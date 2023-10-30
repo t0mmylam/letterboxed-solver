@@ -11,7 +11,7 @@ export type Direction = "top" | "bottom" | "left" | "right";
 interface LetterInputProps {
     direction: Direction; // The direction of the letter input.
     id: number; // The id of the letter input.
-    letters: string[][]; // The 2D array of letters.
+    letters: React.MutableRefObject<string[][]>; // The ref for a 2D array of letters.
 }
 
 /**
@@ -45,16 +45,16 @@ export const LetterInput: FC<LetterInputProps> = ({
         const upperCaseValue = event.target.value.toUpperCase();
         setValue(upperCaseValue);
         if (direction === "top") {
-            letters[0][id] = upperCaseValue;
-        }
-        if (direction === "bottom") {
-            letters[3][id] = upperCaseValue;
+            letters.current[0][id] = upperCaseValue;
         }
         if (direction === "left") {
-            letters[1][id] = upperCaseValue;
+            letters.current[1][id] = upperCaseValue;
         }
         if (direction === "right") {
-            letters[2][id] = upperCaseValue;
+            letters.current[2][id] = upperCaseValue;
+        }
+        if (direction === "bottom") {
+            letters.current[3][id] = upperCaseValue;
         }
     };
 
