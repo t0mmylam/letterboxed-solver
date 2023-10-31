@@ -107,7 +107,6 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
         firstWord: string
     ) => {
         if (node.isEndOfWord) {
-            // console.log(firstWord, path2.join(""), Array.from(used2));
             let count = 0;
             for (const pair of used2) {
                 if (pair[1] >= 1) {
@@ -124,7 +123,7 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
             const group = groups[i];
 
             if (node.children[letter] && lastGroup !== group) {
-              const currentCount = used2.get(letter) || 0;
+                const currentCount = used2.get(letter) || 0;
                 used2.set(letter, currentCount + 1);
                 path2.push(letter);
                 dfsTwoWords(node.children[letter], group, used2, firstWord);
@@ -161,8 +160,8 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
             const group = groups[i];
 
             if (node.children[letter] && lastGroup !== group) {
-              const currentCount = used1.get(letter) || 0;
-              used1.set(letter, currentCount + 1);
+                const currentCount = used1.get(letter) || 0;
+                used1.set(letter, currentCount + 1);
                 path1.push(letter);
                 dfsOneWord(node.children[letter], group, used1);
                 path1.pop();
@@ -175,11 +174,12 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
     return results;
 };
 
-export const useSolver = (letters: string[][], solveTrigger: boolean): string[][] => {
+export const useSolver = (
+    letters: string[][],
+    solveTrigger: boolean
+): string[][] => {
     const [answers, setAnswers] = useState<string[][]>([[]]);
     const trieRef = useRef<Trie | null>(null);
-
-    console.log("UTILS", letters);
 
     // letters = [
     //     ["I", "U", "C"],
@@ -206,11 +206,16 @@ export const useSolver = (letters: string[][], solveTrigger: boolean): string[][
         }
 
         if (trieRef.current) {
-            setAnswers(findOneWords(trieRef.current, letters).concat(findTwoWords(trieRef.current, letters)));
+            console.log(letters);
+            setAnswers(
+                findOneWords(trieRef.current, letters).concat(
+                    findTwoWords(trieRef.current, letters)
+                )
+            );
         }
-        console.log(answers);
-    }, [solveTrigger]);
+    }, [letters, solveTrigger]);
 
-    console.log("FINAL", answers);
+    console.log(answers);
+
     return answers;
 };

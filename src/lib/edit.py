@@ -18,7 +18,7 @@ def merge_text_files(file1, file2, output_file):
     except Exception as e:
         print(f"An error occurred while reading {file2}: {e}")
         return
-    
+
     merged_words = words1.union(words2)
 
     try:
@@ -30,3 +30,5 @@ def merge_text_files(file1, file2, output_file):
         return
 
     print("Files were successfully merged and written to", output_file)
+
+merge_text_files("dictionary.txt", "test.txt", "words.txt")
