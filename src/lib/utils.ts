@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -178,44 +178,49 @@ export const useSolver = (
     letters: string[][],
     solveTrigger: boolean
 ): string[][] => {
-    const [answers, setAnswers] = useState<string[][]>([[]]);
+    const [answers, setAnswers] = useState<string[][]>([]);
     const trieRef = useRef<Trie | null>(null);
-
-    // letters = [
-    //     ["I", "U", "C"],
-    //     ["S", "G", "P"],
-    //     ["Y", "L", "T"],
-    //     ["H", "O", "A"],
-    // ];
+    const solveTriggerRef = useRef<boolean>(solveTrigger);
 
     useEffect(() => {
-        if (!trieRef.current) {
-            fetch("/dictionary.txt")
-                .then((response) => response.text())
-                .then((text) => {
-                    const words = text.split(/\s+/); // Split the text into words based on whitespace
-                    const newTrie = new Trie();
-                    for (const word of words) {
-                        newTrie.insert(word);
-                    }
-                    trieRef.current = newTrie;
-                })
-                .catch((error) =>
-                    console.error("Error fetching words:", error)
-                );
-        }
+        solveTriggerRef.current = solveTrigger;
+    }, [solveTrigger]);
 
+    const computeAnswers = useCallback(() => {
         if (trieRef.current) {
-            console.log(letters);
-            setAnswers(
-                findOneWords(trieRef.current, letters).concat(
-                    findTwoWords(trieRef.current, letters)
-                )
+            const newAnswers = findOneWords(trieRef.current, letters).concat(
+                findTwoWords(trieRef.current, letters)
             );
+            setAnswers(newAnswers);
         }
-    }, [letters, solveTrigger]);
+    }, [letters]);
 
-    console.log(answers);
+    useEffect(() => {
+        const loadDictionary = async () => {
+            try {
+                const response = await fetch("/dictionary.txt");
+                const text = await response.text();
+                const words = text.split(/\s+/);
+                const newTrie = new Trie();
+                for (const word of words) {
+                    newTrie.insert(word);
+                }
+                trieRef.current = newTrie;
+                if (solveTriggerRef.current) {
+                    computeAnswers();
+                }
+            } catch (error) {
+                console.error("Error fetching words:", error);
+            }
+        };
 
+        loadDictionary();
+    }, [computeAnswers]);
+
+    useEffect(() => {
+        if (solveTrigger && trieRef.current) {
+            computeAnswers();
+        }
+    }, [solveTrigger, computeAnswers]);
     return answers;
 };
