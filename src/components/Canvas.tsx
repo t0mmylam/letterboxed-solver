@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import "./Canvas.css";
 
 export const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -69,10 +68,7 @@ export const Canvas = () => {
             ref={canvasRef}
             width="400"
             height="400"
-            style={{
-                width: "400px",
-                height: "400px",
-            }}
+            className="w-[270px] h-[270px] sm:w-[400px] sm:h-[400px]"
         />
     );
 };

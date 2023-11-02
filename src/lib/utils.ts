@@ -174,17 +174,9 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
     return results;
 };
 
-export const useSolver = (
-    letters: string[][],
-    solveTrigger: boolean
-): string[][] => {
+export const useSolver = (letters: string[][]): [string[][], () => void] => {
     const [answers, setAnswers] = useState<string[][]>([]);
     const trieRef = useRef<Trie | null>(null);
-    const solveTriggerRef = useRef<boolean>(solveTrigger);
-
-    useEffect(() => {
-        solveTriggerRef.current = solveTrigger;
-    }, [solveTrigger]);
 
     const computeAnswers = useCallback(() => {
         if (trieRef.current) {
@@ -198,7 +190,7 @@ export const useSolver = (
     useEffect(() => {
         const loadDictionary = async () => {
             try {
-                const response = await fetch("/dictionary.txt");
+                const response = await fetch("./dictionary.txt");
                 const text = await response.text();
                 const words = text.split(/\s+/);
                 const newTrie = new Trie();
@@ -206,21 +198,19 @@ export const useSolver = (
                     newTrie.insert(word);
                 }
                 trieRef.current = newTrie;
-                if (solveTriggerRef.current) {
-                    computeAnswers();
-                }
             } catch (error) {
                 console.error("Error fetching words:", error);
             }
         };
 
         loadDictionary();
-    }, [computeAnswers]);
+    }, []);
 
-    useEffect(() => {
-        if (solveTrigger && trieRef.current) {
+    const solve = () => {
+        if (trieRef.current) {
             computeAnswers();
         }
-    }, [solveTrigger, computeAnswers]);
-    return answers;
+    };
+
+    return [answers, solve];
 };

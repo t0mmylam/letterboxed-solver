@@ -1,6 +1,5 @@
 {
     "name": "letterboxed-solver",
-    "homepage": "https://t0mmylam.github.io/letterboxed-solver/",
     "private": false,
     "version": "0.0.0",
     "type": "module",
