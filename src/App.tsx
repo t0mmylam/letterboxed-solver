@@ -47,9 +47,10 @@ function App() {
                 <div className="flex items-center flex-col gap-6">
                     <ScrollArea className="h-[556px] w-[300px] rounded-md border bg-white border-black border-4">
                         <div className="p-4">
-                            <h4 className="mb-4 text-xl font-medium leading-none">
+                            <h4 className="mb-1 text-xl font-medium leading-none">
                                 Solutions
                             </h4>
+                            <p className="text-red-200 text-xs">*Not completely accurate as the word list is not identical to NYT's.</p>
                             <Separator className="my-2" />
                             {JSON.stringify(answers) !== JSON.stringify([[]]) &&
                                 answers.map((answer, index) => (
