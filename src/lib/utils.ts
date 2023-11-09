@@ -107,10 +107,9 @@ const findOneWords = (trie: Trie, letters: string[][]): string[][] => {
 
 // Finds all pairs of valid words that cover all letters without reusing any letter.
 const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
-    // ... (The rest of the `findTwoWords` function remains unchanged)
     // This function is similar to `findOneWords` but finds pairs of words
     // and thus involves two levels of DFS calls.
-    // ...
+
     const results: string[][] = [];
     const path1: string[] = [];
     let path2: string[] = [];
@@ -195,10 +194,9 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
 
 // Custom hook to use the solver in a React component.
 export const useSolver = (letters: string[][]): [string[][], () => void] => {
-    // ... (The rest of the `useSolver` hook remains unchanged)
     // This React hook encapsulates the logic for initializing the Trie,
     // loading the dictionary, and computing the answers.
-    // ...
+
     const [answers, setAnswers] = useState<string[][]>([]);
     const trieRef = useRef<Trie | null>(null);
 
