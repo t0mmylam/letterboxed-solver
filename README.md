@@ -38,11 +38,9 @@
   <p align="center">
     An algorithmic solver for NYT's Letterboxed
     <br />
-    <a href="https://github.com/t0mmylam/letterboxed-solver"><strong>Explore the repo »</strong></a>
+    <a href="https://t0mmylam.github.io/letterboxed-solver/"><strong>View Demo »</strong></a>
     <br />
     <br />
-    <a href="https://t0mmylam.github.io/letterboxed-solver/">View Demo</a>
-    ·
     <a href="https://github.com/t0mmylam/letterboxed-solver/issues">Report Bug</a>
     ·
     <a href="https://github.com/t0mmylam/letterboxed-solver/issues">Request Feature</a>
