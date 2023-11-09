@@ -2,15 +2,18 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useState, useEffect, useRef, useCallback } from "react";
 
+// `cn` function that merges class names using `clsx` and `twMerge` for conditional and combined class names.
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
+// Definition of a Trie node structure.
 type TrieNode = {
     isEndOfWord: boolean;
     children: { [key: string]: TrieNode };
 };
 
+// Trie class for efficient word storage and retrieval.
 class Trie {
     root: TrieNode;
 
@@ -18,10 +21,12 @@ class Trie {
         this.root = this.createNode();
     }
 
+    // Helper function to create a new Trie node.
     createNode(): TrieNode {
         return { isEndOfWord: false, children: {} };
     }
 
+    // Inserts a word into the Trie.
     insert(word: string): void {
         let node = this.root;
         for (const char of word) {
@@ -33,6 +38,7 @@ class Trie {
         node.isEndOfWord = true;
     }
 
+    // Searches for a word in the Trie and returns if it exists as a complete word.
     search(word: string): boolean {
         let node = this.root;
         for (const char of word) {
@@ -45,20 +51,24 @@ class Trie {
     }
 }
 
+// Finds all valid words that can be formed by visiting each group once.
 const findOneWords = (trie: Trie, letters: string[][]): string[][] => {
     const results: string[][] = [];
     const path: string[] = [];
 
+    // Flatten the groups of letters and map each letter to its group index.
     const flatLetters = letters.flat();
     const groups = flatLetters.map((letter) => {
         return letters.findIndex((group) => group.includes(letter));
     });
 
+    // Depth-first search to find words using each letter once.
     const dfs = (
         node: TrieNode,
         lastGroup: number,
         used: Map<string, number>
     ) => {
+        // If a complete word is formed, check if all letters are used.
         if (node.isEndOfWord) {
             let count = 0;
             for (const pair of used) {
@@ -66,20 +76,24 @@ const findOneWords = (trie: Trie, letters: string[][]): string[][] => {
                     count += 1;
                 }
             }
+            // Add to results if all letters are used once.
             if (count === flatLetters.length) {
                 results.push([path.join("")]);
             }
         }
 
+        // Explore the next letters, ensuring we don't revisit the same group.
         for (let i = 0; i < flatLetters.length; i++) {
             const letter = flatLetters[i];
             const group = groups[i];
 
             if (node.children[letter] && lastGroup !== group) {
+                // Increment usage count and continue the search.
                 const currentCount = used.get(letter) || 0;
                 used.set(letter, currentCount + 1);
                 path.push(letter);
                 dfs(node.children[letter], group, used);
+                // Backtrack
                 path.pop();
                 used.set(letter, currentCount);
             }
@@ -91,7 +105,12 @@ const findOneWords = (trie: Trie, letters: string[][]): string[][] => {
     return results;
 };
 
+// Finds all pairs of valid words that cover all letters without reusing any letter.
 const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
+    // ... (The rest of the `findTwoWords` function remains unchanged)
+    // This function is similar to `findOneWords` but finds pairs of words
+    // and thus involves two levels of DFS calls.
+    // ...
     const results: string[][] = [];
     const path1: string[] = [];
     let path2: string[] = [];
@@ -174,7 +193,12 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
     return results;
 };
 
+// Custom hook to use the solver in a React component.
 export const useSolver = (letters: string[][]): [string[][], () => void] => {
+    // ... (The rest of the `useSolver` hook remains unchanged)
+    // This React hook encapsulates the logic for initializing the Trie,
+    // loading the dictionary, and computing the answers.
+    // ...
     const [answers, setAnswers] = useState<string[][]>([]);
     const trieRef = useRef<Trie | null>(null);
 
