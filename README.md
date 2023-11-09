@@ -131,7 +131,7 @@ Don't forget to give the project a star! Thanks again!
 
 ## Contact
 
-Your Name - [@t0mmylam](https://twitter.com/t0mmylam) - thomas.lam@columbia.edu
+Email: thomas.lam@columbia.edu
 
 Project Link: [https://github.com/t0mmylam/letterboxed-solver](https://github.com/t0mmylam/letterboxed-solver)
 
