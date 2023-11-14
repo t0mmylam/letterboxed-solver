@@ -111,6 +111,7 @@ Feel free to use this tool next time you find yourself in a Letterboxed challeng
     - [ ] Display only first and last letters
     - [ ] Display a set number of letters
 -   [ ] Add a definition section to showcase the selected answer
+-   [ ] Add a reset button
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
