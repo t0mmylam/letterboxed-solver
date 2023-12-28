@@ -166,7 +166,7 @@ const findTwoWords = (trie: Trie, letters: string[][]): string[][] => {
                 used2.set(firstLetter, currentCount + 1);
                 dfsTwoWords(
                     trie.root.children[firstLetter],
-                    -1,
+                    lastGroup,
                     used2,
                     firstWord
                 );
