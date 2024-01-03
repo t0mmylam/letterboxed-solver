@@ -21,7 +21,7 @@ function App() {
   const [solverAnswers, solve] = useSolver(lettersRef.current);
   const inputRefs = useRef<Array<React.RefObject<HTMLInputElement>>>([]);
   inputRefs.current = new Array(12).fill(null).map(
-    (ref, index) => inputRefs.current[index] || createRef<HTMLInputElement>()
+    (index) => inputRefs.current[index] || createRef<HTMLInputElement>()
   );
 
 
