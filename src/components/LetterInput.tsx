@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, FC, useState } from "react";
+import { ChangeEvent, KeyboardEvent, FC, useState, useEffect } from "react";
 
 /**
  * The direction of the letter input.
@@ -12,6 +12,7 @@ interface LetterInputProps {
     direction: Direction; // The direction of the letter input.
     id: number; // The id of the letter input.
     letters: React.MutableRefObject<string[][]>; // The ref for a 2D array of letters.
+    reset: boolean; // Whether or not to reset the value of the input.
 }
 
 /**
@@ -24,6 +25,7 @@ export const LetterInput: FC<LetterInputProps> = ({
     direction,
     id,
     letters,
+    reset,
 }) => {
     const [value, setValue] = useState("");
 
@@ -57,6 +59,12 @@ export const LetterInput: FC<LetterInputProps> = ({
             letters.current[3][id] = upperCaseValue;
         }
     };
+
+    useEffect(() => {
+        if (reset) {
+            setValue("");
+        }
+    }, [reset]);
 
     return (
         <input

@@ -102,7 +102,7 @@ Feel free to use this tool next time you find yourself in a Letterboxed challeng
 
 ## Roadmap
 
--   [ ] Draw lines on the canvas when hovering over a solution
+-   [x] Draw lines on the canvas when hovering over a solution
 -   [ ] Make inputs into pin inputs
 -   [ ] Pull data from NYT's to get gameData (will require a backend)
     - [x] Wrote python script to get today's word list
@@ -111,7 +111,7 @@ Feel free to use this tool next time you find yourself in a Letterboxed challeng
     - [ ] Display only first and last letters
     - [ ] Display a set number of letters
 -   [ ] Add a definition section to showcase the selected answer
--   [ ] Add a reset button
+-   [x] Add a reset button
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
