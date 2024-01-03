@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, createRef } from "react";
 import { LetterInput } from "./components/LetterInput";
 import { Canvas } from "./components/Canvas";
 import { Button } from "@/components/ui/button";
@@ -18,8 +18,33 @@ function App() {
     ["", "", ""],
   ]);
   const [reset, setReset] = useState(false);
-
   const [solverAnswers, solve] = useSolver(lettersRef.current);
+  const inputRefs = useRef<Array<React.RefObject<HTMLInputElement>>>([]);
+  inputRefs.current = new Array(12).fill(null).map(
+    (ref, index) => inputRefs.current[index] || createRef<HTMLInputElement>()
+  );
+
+
+  const focusNext = (currentId: number) => {
+    if (currentId < inputRefs.current.length - 1) {
+      const nextInput = inputRefs.current[currentId + 1];
+      console.log(nextInput)
+      if (nextInput && nextInput.current) {
+        console.log("next", currentId)
+        nextInput.current.focus();
+      }
+    }
+  };
+
+  // Function to focus the previous input
+  const focusPrev = (currentId: number) => {
+    if (currentId > 0) {
+      const prevInput = inputRefs.current[currentId - 1];
+      if (prevInput && prevInput.current) {
+        prevInput.current.focus();
+      }
+    }
+  }
 
   useEffect(() => {
     setAnswers(solverAnswers);
@@ -58,18 +83,27 @@ function App() {
                 id={0}
                 letters={lettersRef}
                 reset={reset}
+                focusNext={() => focusNext(0)}
+                focusPrev={() => focusPrev(0)}
+                ref={inputRefs.current[0]}
               />
               <LetterInput
                 direction="top"
                 id={1}
                 letters={lettersRef}
                 reset={reset}
+                focusNext={() => focusNext(1)}
+                focusPrev={() => focusPrev(1)}
+                ref={inputRefs.current[1]}
               />
               <LetterInput
                 direction="top"
                 id={2}
                 letters={lettersRef}
                 reset={reset}
+                focusNext={() => focusNext(2)}
+                focusPrev={() => focusPrev(2)}
+                ref={inputRefs.current[2]}
               />
             </div>
             <div>
@@ -80,18 +114,27 @@ function App() {
                     id={0}
                     letters={lettersRef}
                     reset={reset}
+                    focusNext={() => focusNext(3)}
+                    focusPrev={() => focusPrev(3)}
+                    ref={inputRefs.current[3]}
                   />
                   <LetterInput
                     direction="left"
                     id={1}
                     letters={lettersRef}
                     reset={reset}
+                    focusNext={() => focusNext(4)}
+                    focusPrev={() => focusPrev(4)}
+                    ref={inputRefs.current[4]}
                   />
                   <LetterInput
                     direction="left"
                     id={2}
                     letters={lettersRef}
                     reset={reset}
+                    focusNext={() => focusNext(5)}
+                    focusPrev={() => focusPrev(5)}
+                    ref={inputRefs.current[5]}
                   />
                 </div>
                 <Canvas hovered={hovered} letters={letters} />
@@ -101,18 +144,27 @@ function App() {
                     id={0}
                     letters={lettersRef}
                     reset={reset}
+                    focusNext={() => focusNext(6)}
+                    focusPrev={() => focusPrev(6)}
+                    ref={inputRefs.current[6]}
                   />
                   <LetterInput
                     direction="right"
                     id={1}
                     letters={lettersRef}
                     reset={reset}
+                    focusNext={() => focusNext(7)}
+                    focusPrev={() => focusPrev(7)}
+                    ref={inputRefs.current[7]}
                   />
                   <LetterInput
                     direction="right"
                     id={2}
                     letters={lettersRef}
                     reset={reset}
+                    focusNext={() => focusNext(8)}
+                    focusPrev={() => focusPrev(8)}
+                    ref={inputRefs.current[8]}
                   />
                 </div>
               </div>
@@ -123,18 +175,27 @@ function App() {
                 id={0}
                 letters={lettersRef}
                 reset={reset}
+                focusNext={() => focusNext(9)}
+                focusPrev={() => focusPrev(9)}
+                ref={inputRefs.current[9]}
               />
               <LetterInput
                 direction="bottom"
                 id={1}
                 letters={lettersRef}
                 reset={reset}
+                focusNext={() => focusNext(10)}
+                focusPrev={() => focusPrev(10)}
+                ref={inputRefs.current[10]}
               />
               <LetterInput
                 direction="bottom"
                 id={2}
                 letters={lettersRef}
                 reset={reset}
+                focusNext={() => focusNext(11)}
+                focusPrev={() => focusPrev(11)}
+                ref={inputRefs.current[11]}
               />
             </div>
           </div>
