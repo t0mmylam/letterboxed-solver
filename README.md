@@ -103,7 +103,7 @@ Feel free to use this tool next time you find yourself in a Letterboxed challeng
 ## Roadmap
 
 -   [x] Draw lines on the canvas when hovering over a solution
--   [ ] Make inputs into pin inputs
+-   [x] Make inputs into pin inputs
 -   [ ] Pull data from NYT's to get gameData (will require a backend)
     - [x] Wrote python script to get today's word list
 -   [ ] Present options for how the solutions are displayed

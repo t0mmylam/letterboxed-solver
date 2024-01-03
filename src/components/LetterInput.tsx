@@ -1,32 +1,28 @@
-import { ChangeEvent, KeyboardEvent, FC, useState, useEffect } from "react";
+import {
+    ChangeEvent,
+    KeyboardEvent,
+    FC,
+    useState,
+    useEffect,
+    forwardRef,
+} from "react";
 
-/**
- * The direction of the letter input.
- */
 export type Direction = "top" | "bottom" | "left" | "right";
 
-/**
- * The props for the LetterInput component.
- */
 interface LetterInputProps {
-    direction: Direction; // The direction of the letter input.
-    id: number; // The id of the letter input.
-    letters: React.MutableRefObject<string[][]>; // The ref for a 2D array of letters.
-    reset: boolean; // Whether or not to reset the value of the input.
+    direction: Direction;
+    id: number;
+    letters: React.MutableRefObject<string[][]>;
+    reset: boolean;
+    focusNext: () => void;
+    focusPrev: () => void;
+    ref: React.Ref<HTMLInputElement>;
 }
 
-/**
- * The LetterInput component.
- * @param direction - The direction of the letter input.
- * @param id - The id of the letter input.
- * @param letters - The 2D array of letters.
- */
-export const LetterInput: FC<LetterInputProps> = ({
-    direction,
-    id,
-    letters,
-    reset,
-}) => {
+export const LetterInput: FC<LetterInputProps> = forwardRef<
+    HTMLInputElement,
+    LetterInputProps
+>(({ direction, id, letters, reset, focusNext, focusPrev }, ref) => {
     const [value, setValue] = useState("");
 
     /**
@@ -39,25 +35,20 @@ export const LetterInput: FC<LetterInputProps> = ({
         }
     };
 
-    /**
-     * Handles the change event of the input.
-     * @param event - The change event.
-     */
+    const handleKeyUp = (event: KeyboardEvent<HTMLInputElement>) => {
+        // When a character is entered move to the next input
+        if (event.key.length === 1 && /[a-zA-Z]/i.test(event.key)) {
+            focusNext();
+        } else if (event.key === "Backspace" && !value) {
+            // If backspace is pressed and the input is already empty, focus the previous input
+            focusPrev();
+        }
+    };
+
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const upperCaseValue = event.target.value.toUpperCase();
         setValue(upperCaseValue);
-        if (direction === "top") {
-            letters.current[0][id] = upperCaseValue;
-        }
-        if (direction === "left") {
-            letters.current[1][id] = upperCaseValue;
-        }
-        if (direction === "right") {
-            letters.current[2][id] = upperCaseValue;
-        }
-        if (direction === "bottom") {
-            letters.current[3][id] = upperCaseValue;
-        }
+        updateLetters(upperCaseValue); // Simplified method to update the letters ref
     };
 
     useEffect(() => {
@@ -66,15 +57,29 @@ export const LetterInput: FC<LetterInputProps> = ({
         }
     }, [reset]);
 
+    const updateLetters = (value: string) => {
+        if (direction === "top") {
+            letters.current[0][id] = value;
+        } else if (direction === "left") {
+            letters.current[1][id] = value;
+        } else if (direction === "right") {
+            letters.current[2][id] = value;
+        } else if (direction === "bottom") {
+            letters.current[3][id] = value;
+        }
+    };
+
     return (
         <input
+            ref={ref}
             type="text"
             value={value}
             onChange={handleChange}
+            onKeyUp={handleKeyUp}
+            onKeyDown={handleKeyDown}
             className="w-8 h-8 sm:w-12 sm:h-12 text-center text-2xl border-[3px] border-black rounded-md"
             maxLength={1}
-            onKeyDown={handleKeyDown}
             placeholder="_"
         />
     );
-};
+});
