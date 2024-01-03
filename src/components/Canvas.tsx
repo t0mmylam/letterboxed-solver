@@ -62,7 +62,6 @@ export const Canvas = ({ hovered = [""], letters = [""] }) => {
 
         if (hovered[0] !== "") {
           const lettersJoined = hovered.join("");
-          console.log(lettersJoined);
           for (let i = 0; i < lettersJoined.length - 1; i++) {
             const x = coords[letters.indexOf(lettersJoined[i])].x;
             const y = coords[letters.indexOf(lettersJoined[i])].y;

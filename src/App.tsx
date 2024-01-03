@@ -28,9 +28,7 @@ function App() {
   const focusNext = (currentId: number) => {
     if (currentId < inputRefs.current.length - 1) {
       const nextInput = inputRefs.current[currentId + 1];
-      console.log(nextInput)
       if (nextInput && nextInput.current) {
-        console.log("next", currentId)
         nextInput.current.focus();
       }
     }
