@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, FC } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { LetterInput } from "./components/LetterInput";
 import { Canvas } from "./components/Canvas";
 import { Button } from "@/components/ui/button";
