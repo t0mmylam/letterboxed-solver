@@ -19,6 +19,7 @@ function App() {
     const [hovered, setHovered] = useState<string[]>([""]);
     const [letters, setLetters] = useState<string[]>([""]);
     const [showEmptyFieldsAlert, setShowEmptyFieldsAlert] = useState(false);
+    const [isSolving, setIsSolving] = useState(false);
     const lettersRef = useRef([
         ["", "", ""],
         ["", "", ""],
@@ -26,7 +27,10 @@ function App() {
         ["", "", ""],
     ]);
     const [reset, setReset] = useState(false);
-    const [solverAnswers, solve] = useSolver(lettersRef.current);
+    const [solverAnswers, solve, isDictionaryLoading] = useSolver(
+        lettersRef.current
+    );
+    const [hasNYTData, setHasNYTData] = useState(false);
     const inputRefs = useRef<Array<React.RefObject<HTMLInputElement>>>([]);
     inputRefs.current = new Array(12)
         .fill(null)
@@ -45,14 +49,19 @@ function App() {
 
     const handleNYTClick = async () => {
         try {
+            setIsSolving(true);
             const data = await fetchNYTData();
+
             if (data) {
                 const nytLetters = populateLetters(data);
                 if (nytLetters) {
+                    // Update letters and refs
                     lettersRef.current = nytLetters;
                     setLetters(nytLetters.flat());
                     setReset(false);
+                    setHasNYTData(true);
 
+                    // Update input fields
                     nytLetters.forEach((side: string[], sideIndex: number) => {
                         side.forEach((letter: string, letterIndex: number) => {
                             const inputRef =
@@ -63,13 +72,16 @@ function App() {
                         });
                     });
 
-                    if (data.dictionary) {
-                        solve(data.dictionary);
+                    // Wait for dictionary to be ready and solve
+                    if (!isDictionaryLoading && data.dictionary) {
+                        await solve(data.dictionary);
                     }
                 }
             }
         } catch (err) {
             console.error("Error populating letters:", err);
+        } finally {
+            setIsSolving(false);
         }
     };
 
@@ -92,36 +104,44 @@ function App() {
     };
 
     useEffect(() => {
-        setAnswers(solverAnswers);
-        setLetters(lettersRef.current.flat());
+        if (solverAnswers) {
+            setAnswers(solverAnswers);
+            setLetters(lettersRef.current.flat());
+        }
     }, [solverAnswers]);
 
-    const handleSolveClick = () => {
-        // Check for empty fields
+    const handleSolveClick = async () => {
         const hasEmptyFields = lettersRef.current.some((side) =>
             side.some((letter) => !letter.trim())
         );
 
         if (hasEmptyFields) {
             setShowEmptyFieldsAlert(true);
-            // Auto-hide after 2 seconds
             setTimeout(() => setShowEmptyFieldsAlert(false), 2000);
             return;
         }
 
+        setIsSolving(true);
         solve();
+        setTimeout(() => setIsSolving(false), 500);
     };
 
     const handleResetClick = () => {
         setAnswers([[]]);
         setReset(true);
         setHovered([""]);
+        setHasNYTData(false); // Clear NYT data flag
         lettersRef.current = [
             ["", "", ""],
             ["", "", ""],
             ["", "", ""],
             ["", "", ""],
         ];
+        inputRefs.current.forEach((ref) => {
+            if (ref.current) {
+                ref.current.value = "";
+            }
+        });
     };
 
     return (
@@ -266,8 +286,35 @@ function App() {
                             variant="secondary"
                             onClick={handleSolveClick}
                             size="lg"
+                            disabled={isSolving}
                         >
-                            Solve
+                            {isSolving ? (
+                                <>
+                                    <svg
+                                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        ></path>
+                                    </svg>
+                                    Solving...
+                                </>
+                            ) : (
+                                "Solve"
+                            )}
                         </Button>
                         <Button
                             variant="destructive"
@@ -279,11 +326,37 @@ function App() {
                         <Button
                             variant="default"
                             onClick={handleNYTClick}
-                            disabled={isLoading}
+                            disabled={isLoading || isDictionaryLoading}
                             size="lg"
                             className="bg-indigo-600 hover:bg-indigo-700 text-white"
                         >
-                            {isLoading ? "Loading..." : "Use NYT"}
+                            {isLoading || isDictionaryLoading ? (
+                                <>
+                                    <svg
+                                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                        ></path>
+                                    </svg>
+                                    Loading...
+                                </>
+                            ) : (
+                                "Use NYT"
+                            )}
                         </Button>
                     </div>
                 </div>
@@ -295,34 +368,45 @@ function App() {
                             <h4 className="mb-1 text-xl font-medium leading-none">
                                 Solutions
                             </h4>
-                            {nytData?.ourSolution && (
+                            {hasNYTData && nytData?.ourSolution && (
                                 <p className="text-green-600 text-sm mb-2">
                                     NYT's solution:{" "}
                                     {nytData.ourSolution.join(" — ")}
                                 </p>
                             )}
                             <Separator className="my-2" />
-                            {JSON.stringify(answers) !== JSON.stringify([[]]) &&
-                                answers.map((answer, index) => (
-                                    <React.Fragment key={index}>
-                                        <div
-                                            className={`text-sm flex items-center answer ${
-                                                hovered.join("") ===
-                                                answer.join("")
-                                                    ? "font-bold"
-                                                    : ""
-                                            }`}
-                                            onMouseEnter={() =>
-                                                setHovered(answer)
-                                            }
-                                        >
-                                            {answer[0]}
-                                            <span>&#8212;</span>
-                                            {answer[1]}
+                            {!isSolving && (
+                                <>
+                                    {answers &&
+                                    answers.length > 0 &&
+                                    answers[0].length > 0 ? (
+                                        answers.map((answer, index) => (
+                                            <React.Fragment key={index}>
+                                                <div
+                                                    className={`text-sm flex items-center answer ${
+                                                        hovered.join("") ===
+                                                        answer.join("")
+                                                            ? "font-bold"
+                                                            : ""
+                                                    }`}
+                                                    onMouseEnter={() =>
+                                                        setHovered(answer)
+                                                    }
+                                                >
+                                                    {answer[0]}
+                                                    <span>&#8212;</span>
+                                                    {answer[1]}
+                                                </div>
+                                                <Separator className="my-2" />
+                                            </React.Fragment>
+                                        ))
+                                    ) : (
+                                        <div className="text-gray-500 text-sm text-center py-4">
+                                            No Solutions Found
                                         </div>
-                                        <Separator className="my-2" />
-                                    </React.Fragment>
-                                ))}
+                                    )}
+                                </>
+                            )}
                         </div>
                     </ScrollArea>
                 </div>
