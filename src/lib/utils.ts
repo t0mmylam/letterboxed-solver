@@ -203,7 +203,7 @@ export const useSolver = (
                     trieRef.current.insert(word.toUpperCase());
                 }
             }
-
+            // console.log(letters, validLetters);
             const solutions = findValidSolutions(
                 trieRef.current,
                 letters,

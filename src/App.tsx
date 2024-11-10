@@ -20,6 +20,7 @@ function App() {
     const [letters, setLetters] = useState<string[]>([""]);
     const [showEmptyFieldsAlert, setShowEmptyFieldsAlert] = useState(false);
     const [isSolving, setIsSolving] = useState(false);
+    const shouldSolveRef = useRef(false);
     const lettersRef = useRef([
         ["", "", ""],
         ["", "", ""],
@@ -32,6 +33,7 @@ function App() {
     );
     const [hasNYTData, setHasNYTData] = useState(false);
     const inputRefs = useRef<Array<React.RefObject<HTMLInputElement>>>([]);
+    const [nytDictionary, setNYTDictionary] = useState<string[]>([]);
     inputRefs.current = new Array(12)
         .fill(null)
         .map(
@@ -47,39 +49,48 @@ function App() {
         populateLetters,
     } = useNYTData();
 
+    useEffect(() => {
+        // If we should solve and we have letters populated
+        if (shouldSolveRef.current && letters.some(letter => letter !== "")) {
+            shouldSolveRef.current = false; // Reset the flag
+            solve(nytDictionary); // Solve with the dictionary
+        }
+    }, [letters, nytDictionary, solve]);
+
     const handleNYTClick = async () => {
         try {
             setIsSolving(true);
             const data = await fetchNYTData();
 
             if (data) {
-                const nytLetters = populateLetters(data);
+                const nytLetters = await populateLetters(data);
                 if (nytLetters) {
-                    // Update letters and refs
-                    lettersRef.current = nytLetters;
+                    // Set solve flag before updating state
+                    shouldSolveRef.current = true;
+                    
+                    // Update dictionary first
+                    setNYTDictionary(data.dictionary);
+                    
+                    // Batch these updates together
                     setLetters(nytLetters.flat());
                     setReset(false);
                     setHasNYTData(true);
-
-                    // Update input fields
-                    nytLetters.forEach((side: string[], sideIndex: number) => {
-                        side.forEach((letter: string, letterIndex: number) => {
-                            const inputRef =
-                                inputRefs.current[sideIndex * 3 + letterIndex];
+                    
+                    // Update ref and input fields
+                    lettersRef.current = nytLetters;
+                    nytLetters.forEach((side, sideIndex) => {
+                        side.forEach((letter, letterIndex) => {
+                            const inputRef = inputRefs.current[sideIndex * 3 + letterIndex];
                             if (inputRef.current) {
                                 inputRef.current.value = letter;
                             }
                         });
                     });
-
-                    // Wait for dictionary to be ready and solve
-                    if (!isDictionaryLoading && data.dictionary) {
-                        await solve(data.dictionary);
-                    }
                 }
             }
         } catch (err) {
             console.error("Error populating letters:", err);
+            shouldSolveRef.current = false; // Reset flag on error
         } finally {
             setIsSolving(false);
         }
@@ -106,7 +117,6 @@ function App() {
     useEffect(() => {
         if (solverAnswers) {
             setAnswers(solverAnswers);
-            setLetters(lettersRef.current.flat());
         }
     }, [solverAnswers]);
 
@@ -127,10 +137,13 @@ function App() {
     };
 
     const handleResetClick = () => {
+        shouldSolveRef.current = false; // Reset solve flag
         setAnswers([[]]);
         setReset(true);
         setHovered([""]);
-        setHasNYTData(false); // Clear NYT data flag
+        setHasNYTData(false);
+        setNYTDictionary([]);
+        setLetters([""]); // Reset letters state
         lettersRef.current = [
             ["", "", ""],
             ["", "", ""],
