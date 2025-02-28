@@ -1,1 +1,6 @@
-https://t0mmylam.github.io/letterboxed-solver/
+User-agent: *
+Allow: /
+Sitemap: https://t0mmylam.github.io/letterboxed-solver/sitemap.xml
+
+# Welcome to NYT Letter Boxed Solver
+# All content is freely accessible to search engines

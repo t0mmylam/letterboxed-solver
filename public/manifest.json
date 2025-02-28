@@ -1,0 +1,25 @@
+{
+  "name": "NYT Letter Boxed Solver",
+  "short_name": "Letter Boxed",
+  "description": "Free online solver for the New York Times Letter Boxed puzzle game. Get instant solutions using our algorithmic solver.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "193x193",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["games", "utilities", "productivity"],
+  "screenshots": [
+    {
+      "src": "/DEMO.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Letter Boxed Solver Interface"
+    }
+  ]
+}

@@ -81,9 +81,9 @@
 
 Welcome to the Letterboxed Solver – a personal project designed to help solve the Letterboxed game from the New York Times. For those unfamiliar, Letterboxed presents you with letters arranged in a circle, and your task is to create words that start and end with these letters.
 
-In developing this solver, I’ve employed a Trie data structure, a powerful tool for efficiently storing and retrieving words. It allows for fast and effective searching, ensuring that no possible solution is left unchecked.
+In developing this solver, I've employed a Trie data structure, a powerful tool for efficiently storing and retrieving words. It allows for fast and effective searching, ensuring that no possible solution is left unchecked.
 
-This project isn’t just about finding answers; it’s also an exploration of how data structures like Trie can be applied in practical, real-world scenarios to enhance performance and results.
+This project isn't just about finding answers; it's also an exploration of how data structures like Trie can be applied in practical, real-world scenarios to enhance performance and results.
 
 Feel free to use this tool next time you find yourself in a Letterboxed challenge, and watch it swiftly provide you with all the possible solutions. Enjoy solving!
 
